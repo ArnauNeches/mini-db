@@ -4,3 +4,6 @@ data/*
 
 # For internal development tests
 pruebas.ipynb
+
+# pycache
+__pycache__/

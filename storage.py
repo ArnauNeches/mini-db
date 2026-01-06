@@ -1,5 +1,7 @@
 # Main storage functions, read/write json files.
 import json
+import os
+import utils
 
 def store_table(table: dict):
     """
@@ -22,5 +24,14 @@ def read_table(table_name: str) -> dict:
         return {}
     except json.JSONDecodeError:
         return {}
-
+    
+def delete_table(table_name: str):
+    """
+    Delete a table given its name.
+    """
+    print(f"You are about to delete the table {table_name}. You will lose all its contents.")
+    if not utils.acknoledge_continue():
+        return 
+    
+    os.remove(f"data/{table_name}.json")
     

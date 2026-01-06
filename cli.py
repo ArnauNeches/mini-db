@@ -1,6 +1,8 @@
 # These will be wrapper functions for the command line behavior of the program
 import database
 import storage
+import table
+import utils
 from pathlib import Path
 
 def create_table_cli():
@@ -84,3 +86,29 @@ def create_table_cli():
 
     table = database.create_table(schema, name)
     storage.store_table(table)
+
+def delete_table_cli():
+    """
+    CLI instructions for deleting a table.
+    """
+    data_dir = Path("data")
+    table_names = {f.stem for f in data_dir.glob("*.json")}
+
+    print("----- DELETE A TABLE -----")
+
+    print("Your are now entering the delete table process.")
+    if not utils.acknoledge_continue():
+        return 
+    
+    print("Existing tables: ")
+    for table_name in table_names:
+        print(table_name)
+    
+    table_name = input("Which table do you want to delete? (Type any invalid table if you want to leave the deleting process): ")
+    if table_name not in table_names:
+        return
+    
+    print("This table's contents are: ")
+    table.show_table_contents(table_name)
+    
+    storage.delete_table(table_name)
