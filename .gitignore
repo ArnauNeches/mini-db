@@ -1,0 +1,3 @@
+# Ignore json files inside data/ but commit the folder itself
+data/*
+!data/.gitkeep
