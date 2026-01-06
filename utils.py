@@ -7,3 +7,9 @@ def acknoledge_continue():
         return False
     else:
         return True
+    
+def valid_actions():
+    print("Actions you can do: ")
+    print("Create a table (c)")
+    print("Edit/View a table (e)")
+    print("Delete a table (d)")

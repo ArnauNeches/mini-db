@@ -4,6 +4,38 @@ import storage
 import table
 import utils
 from pathlib import Path
+from datetime import date
+
+def index():
+    """
+    Initial app loop.
+    """
+    valid_actions = {"c", "e", "d"}
+    print("----- WELCOME TO MINI-DB -----")
+    print("Author: Arnau Neches Vilà")
+
+    while True:
+        utils.valid_actions()
+        print("\n")
+
+        while True:
+            action = input("What do you want to do? (c, e, d): ")
+
+            if action not in valid_actions:
+                print("Invalid action, try again please.")
+                utils.valid_actions()
+            else:
+                break
+        
+        if action == "c":
+            create_table_cli()
+        elif action == "d":
+            delete_table_cli()
+        elif action == "e":
+            #TODO
+            pass
+
+
 
 def create_table_cli():
     '''
@@ -109,6 +141,24 @@ def delete_table_cli():
         return
     
     print("This table's contents are: ")
-    table.show_table_contents(table_name)
+    table.show_table_contents(table_name=table_name)
     
     storage.delete_table(table_name)
+
+def view_edit_tables_cli():
+    pass
+
+def edit_table_entry_cli(table_name: str, entry_id: int):
+    """
+    CLI function to edit a table entry.
+    """
+    pass
+
+def create_table_entry_cli(table_name: str):
+    """
+    Create a new entry on a table.
+    """
+    pass
+
+if __name__ == "__main__":
+    create_table_cli()

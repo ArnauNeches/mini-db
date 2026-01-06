@@ -11,3 +11,14 @@ def create_table(schema: dict, name:str) -> dict:
     new_table["data"] = {}
 
     return new_table
+
+def join_table_contents(schema: dict, metadata: dict, data: dict) -> dict:
+    """
+    Given a table schema, data and metadata, joins them into a single unified dictionary.
+    """
+    table = {}
+    table["schema"] = schema
+    table["meta"] = metadata
+    table["data"] = data
+
+    return table

@@ -7,3 +7,6 @@ pruebas.ipynb
 
 # pycache
 __pycache__/
+
+# Virtual environment
+myenv/
