@@ -1,5 +1,6 @@
-# Main database functions, create a new table, show all tables or delete a existing table
+# Main database functions, create a new table, show all tables or delete a existing table. Only works with dictionaries.
 from datetime import date
+from pathlib import Path
 
 def create_table(schema: dict, name:str) -> dict:
     """
@@ -22,3 +23,10 @@ def join_table_contents(schema: dict, metadata: dict, data: dict) -> dict:
     table["data"] = data
 
     return table
+
+def tables_names() -> set[str]:
+    """
+    Return the name of all existing tables.
+    """
+    path = Path("data/")
+    return {f.stem for f in path.glob("*.json")}

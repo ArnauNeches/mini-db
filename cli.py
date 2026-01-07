@@ -3,8 +3,6 @@ import database
 import storage
 import table
 import utils
-from pathlib import Path
-from datetime import date
 
 def index():
     """
@@ -32,8 +30,7 @@ def index():
         elif action == "d":
             delete_table_cli()
         elif action == "e":
-            #TODO
-            pass
+            view_edit_tables_cli()
 
 
 
@@ -41,8 +38,7 @@ def create_table_cli():
     '''
     Create a table and stores it in data/ as a json file
     '''
-    data_dir = Path("data")
-    tables = {f.stem for f in data_dir.glob("*.json")}
+    tables_names = database.tables_names()
 
     print(f"----- CREATE A TABLE -----")
     print("\n")
@@ -50,10 +46,10 @@ def create_table_cli():
     while True:
         name = str(input("Table name?: "))
 
-        if name == "Back":
-            print("Invalid name for a table, try another one (Note that Back is reserved).")
-        elif name in tables:
+        if name in tables_names:
             print(f"A table called {name} already exists in the database, try another name.")
+            print("List of existing tables: ")
+            print(tables_names)
         else:
             break
     
@@ -65,9 +61,9 @@ def create_table_cli():
         try:
             n_fields = int(user_input)
 
-            if n_fields > 100:
-                n_fields = 100
-                print("Number of fields limit is 100, you will be asked only for a 100 fields.")
+            if n_fields > 50:
+                n_fields = 50
+                print("Number of fields limit is 50, you will be asked only for a 50 fields.")
 
             break
 
@@ -88,9 +84,6 @@ def create_table_cli():
                 print("There already exist a field with that name, try again.")
                 print("Created fields: ")
                 print(field_names)
-
-            elif field_name == "Back":
-                print("Invalid field name, try another one (Note that Back is reserved).")
 
             else:
                 break
@@ -123,8 +116,7 @@ def delete_table_cli():
     """
     CLI instructions for deleting a table.
     """
-    data_dir = Path("data")
-    table_names = {f.stem for f in data_dir.glob("*.json")}
+    tables_names = database.tables_names()
 
     print("----- DELETE A TABLE -----")
 
@@ -133,32 +125,71 @@ def delete_table_cli():
         return 
     
     print("Existing tables: ")
-    for table_name in table_names:
+    for table_name in tables_names:
         print(table_name)
     
     table_name = input("Which table do you want to delete? (Type any invalid table if you want to leave the deleting process): ")
-    if table_name not in table_names:
+    if table_name not in tables_names:
         return
     
     print("This table's contents are: ")
-    table.show_table_contents(table_name=table_name)
-    
+    table_contents = storage.read_table(table_name)
+    table.show_table_contents(table_contents)
     storage.delete_table(table_name)
 
 def view_edit_tables_cli():
+    """
+    CLI function to orchestate the viewing and editing process.
+    """
+    tables_names = database.tables_names()
+
+    print("----- VIEW/EDIT A TABLE -----") 
+    print("You are now entering the view/edit process.")
+
+    print("\n")
+
+    print("Existing tables: ")
+    for name in tables_names:
+        print(name)
+
+    while True:
+        table_name = input("Enter a table's name: ")
+
+        if table_name not in tables_names:
+            print("This table doesn't exist. Try again.")
+        else:
+            break
+
+    table_contents = storage.read_table(table_name)
+    table.show_table_contents(table_contents)
+
+    
+
+    
+
+
+def edit_table_entry_cli(table_contents: dict, entry_id: int):
+    """
+    CLI function to edit a table's entry.
+    """
     pass
 
-def edit_table_entry_cli(table_name: str, entry_id: int):
+def create_table_entry_cli(table_contents: dict):
     """
-    CLI function to edit a table entry.
+    CLI function to create a new entry on a table.
     """
     pass
 
-def create_table_entry_cli(table_name: str):
+def delete_table_entry_cli(table_contents: dict, entry_id: int):
     """
-    Create a new entry on a table.
+    CLI function to delete a table's entry.
     """
     pass
+
+def copy_clipboard_cli(table_contents: dict):
+    """
+    CLI function to copy to clipboard a table's contents.
+    """
 
 if __name__ == "__main__":
-    create_table_cli()
+    index()
