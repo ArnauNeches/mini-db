@@ -2,9 +2,6 @@
 data/*
 !data/.gitkeep
 
-# For internal development tests
-pruebas.ipynb
-
 # pycache
 __pycache__/
 

@@ -7,7 +7,7 @@ def create_table(schema: dict, name:str) -> dict:
     Create a table given a dictionary with the field names and their types and a string with the table name.
     """
     new_table = {}
-    new_table["meta"] = {"name": name, "created_at": str(date.today()), "last_modified": str(date.today()), "last_id": 0}
+    new_table["meta"] = {"name": name, "created_at": str(date.today()), "last_modified": str(date.today()), "id_counter": 0}
     new_table["schema"] = schema
     new_table["data"] = {}
 

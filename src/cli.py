@@ -3,6 +3,7 @@ import database
 import storage
 import table
 import utils
+from datetime import date
 
 def index():
     """
@@ -42,6 +43,7 @@ def create_table_cli():
     '''
     tables_names = database.tables_names()
 
+    print("\n")
     print(f"----- CREATE A TABLE -----")
     print("\n")
 
@@ -89,7 +91,8 @@ def create_table_cli():
                 print("There already exist a field with that name, try again.")
                 print("Created fields: ")
                 print(field_names)
-
+            elif field_name == "":
+                print("Invalid field name, try again please. ")
             else:
                 break
 
@@ -114,8 +117,9 @@ def delete_table_cli():
     CLI instructions for deleting a table.
     """
     tables_names = database.tables_names()
-
+    print("\n")
     print("----- DELETE A TABLE -----")
+    print("\n")
 
     print("Your are now entering the delete table process.")
     if not utils.acknoledge_continue():
@@ -140,10 +144,14 @@ def view_edit_tables_cli():
     """
     tables_names = database.tables_names()
 
+    print("\n")
     print("----- VIEW/EDIT A TABLE -----") 
     print("You are now entering the view/edit process.")
-
     print("\n")
+
+    if len(tables_names) == 0:
+        print("There are no tables currently in the database. Please create one and come back.")
+        return
 
     print("Existing tables: ")
     for name in tables_names:
@@ -183,12 +191,23 @@ def view_edit_tables_cli():
     elif action == "cc":
         copy_clipboard_cli(table_contents)
 
+
+"""
+-----------------------------------------------------------
+--------------- INDIVIDUAL TABLE OPERATIONS ---------------
+-----------------------------------------------------------
+"""
+
+
 def edit_table_entry_cli(table_contents: dict):
     """
     CLI function to edit a table's entry.
     """
     schema = table_contents["schema"]
-    valid_ids = table_contents["data"].keys()
+    valid_ids = set(table_contents["data"].keys())
+    
+    if len(valid_ids) == 0:
+        print("This table can't be edited as it is empty.")
 
     while True:
         print("\n") 
@@ -197,7 +216,7 @@ def edit_table_entry_cli(table_contents: dict):
         except ValueError:
             print("Please enter an integer. ")
 
-        if str(id) not in set(valid_ids):
+        if str(id) not in valid_ids:
             print("Invalid id, try again please.")
             print("Valid ids are: ")
             print(valid_ids)
@@ -257,7 +276,7 @@ def edit_table_entry_cli(table_contents: dict):
         
         new_entry_data[fn] = new_value
     
-    table_contents["data"][str(id)] = new_entry_data
+    table.edit_entry(table_contents, new_entry_data, id)
     storage.store_table(table_contents)
 
 
@@ -302,9 +321,8 @@ def create_table_entry_cli(table_contents: dict):
                     print("Incorrect type for the field. Try again please.")
             
             new_entry_data[fn] = new_value
-        current_id = table_contents["meta"]["last_id"]
-        table_contents["data"][str(current_id)] = new_entry_data
-        table_contents["meta"]["last_id"] = current_id + 1
+        
+        table.add_entry(table_contents, new_entry_data)
     
     storage.store_table(table_contents)
     print("Entries created successfully. ")
@@ -327,6 +345,7 @@ def delete_table_entry_cli(table_contents: dict):
             print(valid_ids)
         else:
             break
+
     table.delete_entry(table_contents, id)
     storage.store_table(table_contents)
     print(f"Entry with id {id} successfully deleted. ")

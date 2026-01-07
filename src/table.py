@@ -1,9 +1,9 @@
 # Table operations, edit, insert or delete. Functions take dictionaries as arguments, never read directly.
 import pyperclip
 import json
-from pathlib import Path
+from datetime import date
 
-def show_table_contents(table: dict):   
+def show_table_contents(table: dict) -> None:   
     """
     Show data and metadata of a table.
     """
@@ -29,11 +29,28 @@ def split_contents(table: dict):
     """
     return table["schema"], table["meta"], table["data"]
 
-def delete_entry(table: dict, id: int):
+def delete_entry(table: dict, id: int) -> None:
     """
     Delete entry from table, return the table without the entry.
     """
     table["data"].pop(str(id))
+
+def edit_entry(table_content: dict, new_data: dict, id: int) -> None:
+    """
+    Edits a table entry.
+    """
+    table_content["data"][str(id)] = new_data
+    table_content["meta"]["last_modified"] = str(date.today())
+
+def add_entry(table_content: dict, new_data: dict) -> None:
+    """
+    Create a new entry.
+    """
+    entry_id = table_content["meta"]["id_counter"]
+
+    table_content["data"][str(entry_id)] = new_data
+    table_content["meta"]["last_modified"] = str(date.today())
+    table_content["meta"]["id_counter"] = entry_id + 1
 
 def copy_to_clipboard(table: dict):
     """
