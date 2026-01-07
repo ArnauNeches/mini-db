@@ -8,29 +8,35 @@ def show_table_contents(table: dict):
     Show data and metadata of a table.
     """
     table_name = table["meta"]["name"]
-    print(f"Table {table_name} contents: ")
     print("\n")
+
     print(f"Table {table_name} metadata: ")
-    print(table["meta"])
+    meta = json.dumps(table["meta"], indent=4, sort_keys=True, ensure_ascii=True)
+    print(meta)
+
     print(f"Table {table_name} schema: ")
-    print(table["schema"])
+    schema = json.dumps(table["schema"], indent=4, sort_keys=True, ensure_ascii=True)
+    print(schema)
+
     print(f"Table {table_name} data: ")
-    print(table["data"])
+    data = json.dumps(table["data"], indent=4, sort_keys=True, ensure_ascii=True)
+    print(data)
 
 
-def table_contents(table: dict):
+def split_contents(table: dict):
     """
     Returns the schema, metadata and data of a table as separate dictionaries.
     """
     return table["schema"], table["meta"], table["data"]
 
-def copy_to_clipboard(table: dict, file: bool):
+def delete_entry(table: dict, id: int):
     """
-    Copy a table json to clipboard.
-    If file, it will copy the file, not just the str.
+    Delete entry from table, return the table without the entry.
     """
-    if file:
-        path = Path(f"data/{table["metadata"]["name"]}.json").resolve()
-        pyperclip.copy(str(path))
-    else:
-        pyperclip.copy(json.dumps(table, sort_keys=True, indent=4, ensure_ascii=False))
+    table["data"].pop(id)
+
+def copy_to_clipboard(table: dict):
+    """
+    Copy a table's json to clipboard.
+    """
+    pyperclip.copy(json.dumps(table, sort_keys=True, indent=4, ensure_ascii=True))

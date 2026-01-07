@@ -22,7 +22,3 @@ def valid_actions_ve():
     print("Copy table to clipboard (cc)")
     print("Go back to main page (b)")
 
-def valid_actions_cc():
-    print("Actions you can do: ")
-    print("Copy table contents as a str (s)")
-    print("Copy json file itself (f)")

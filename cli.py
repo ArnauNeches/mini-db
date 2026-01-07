@@ -9,10 +9,12 @@ def index():
     Initial app loop.
     """
     valid_actions = {"c", "e", "d"}
+    print("\n")
     print("----- WELCOME TO MINI-DB -----")
     print("Author: Arnau Neches Vilà")
 
     while True:
+        print("\n")
         utils.valid_actions_main()
         print("\n")
 
@@ -98,22 +100,14 @@ def create_table_cli():
                 print(f"Invalid type, valid types are: {valid_types}. Try again.")
             else:
                 break
-        
-        if field_type == "l":
-            while True:
-                list_type = input("List type, what type are the list elements?: ")
             
-                if list_type not in valid_types:
-                    print(f"Invalid type, valid types are: {valid_types}. Try again.")
-                else:
-                    break
-            
-            schema[field_name] = {"type": field_type, "items": list_type}
-        else:
-            schema[field_name] = {"type": field_type}
+        schema[field_name] = field_type
 
     table = database.create_table(schema, name)
     storage.store_table(table)
+
+    print("\n")
+    print(f"The table {name} has been successfully created under the directory data/{name}.json ")
 
 def delete_table_cli():
     """
@@ -167,6 +161,7 @@ def view_edit_tables_cli():
     table.show_table_contents(table_contents)
 
     valid_actions = {"c", "e", "d", "cc", "b"}
+    print("\n")
     utils.valid_actions_ve()
     while True:
         action = input("What do you want to do? (Valid actions are c, e, d, cc, b): ")
@@ -198,31 +193,76 @@ def create_table_entry_cli(table_contents: dict):
     """
     CLI function to create a new entry on a table.
     """
-    pass
+    schema = table_contents["schema"]
+    while True:
+        try:
+            new_entries = int(input("How many new entries do you want to create?: "))
+            break
+        except ValueError:
+            print("Please enter an integer. ")
+    schema = table_contents["schema"]
+    for i in range(new_entries):
+        new_entry_data = {}
+        for fn, t in schema.items():
+            while True:
+                try:
+                    if t == "i":
+                        new_value = int(input(f"Enter the value for {fn}, it must be an integer: "))
+                        break
+                    elif t == "s":
+                        new_value = str(input(f"Enter the value for {fn}, it must be a string: "))
+                        break
+                    elif t == "f":
+                        new_value = float(input(f"Enter the value for {fn}, it must be a float: "))
+                        break
+                    elif t == "b":
+                        new_value = bool(input(f"Enter the value for {fn}, it must be a boolean: "))
+                        break
+                    elif t == "l":
+                        raw = input(f"Enter the value for {fn}, it must be a comma separated list: ")
+                        new_value = [item.strip() for item in raw.split(",")]
+                        break
+                except ValueError:
+                    print("\n")
+                    print("Incorrect type for the field. Try again please.")
+            
+            new_entry_data[fn] = new_value
+        current_id = table_contents["meta"]["last_id"]
+        table_contents["data"][str(current_id)] = new_entry_data
+        table_contents["meta"]["last_id"] = current_id + 1
+    
+    storage.store_table(table_contents)
+    print("Entries created successfully. ")
 
 def delete_table_entry_cli(table_contents: dict):
     """
     CLI function to delete a table's entry.
     """
-    pass
+    valid_ids = table_contents["data"].keys()
+    while True:
+        print("\n") 
+        try:
+            id = int(input("Which entry do you want to delete?: "))
+        except ValueError:
+            print("Please enter an integer. ")
+
+        if id not in valid_ids:
+            print("Invalid id, try again please.")
+            print("Valid ids are: ")
+            print(valid_ids)
+        else:
+            break
+    table.delete_entry(table_contents, id)
+    storage.store_table(table_contents)
+    print(f"Entry with id {id} successfully deleted. ")
 
 def copy_clipboard_cli(table_contents: dict):
     """
     CLI function to copy to clipboard a table's contents.
     """
-    print("----- COPY TABLE CONTENTS -----")
-    valid_actions = {"s", "f"}
-    utils.valid_actions_cc()
-
-    while True:
-        action = input("What do you want to do? (Valid actions are s, f): ")
-        if action not in valid_actions:
-            print("Invalid action , try again please.")
-            utils.valid_actions_cc()
-        else:
-            break
-    
-    table.copy_to_clipboard(table_contents, action == "f")
+    print("\n")
+    table.copy_to_clipboard(table_contents)
+    print("Contents copied. ")
 
 if __name__ == "__main__":
     index()
