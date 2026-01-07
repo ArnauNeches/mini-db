@@ -33,7 +33,7 @@ def delete_entry(table: dict, id: int):
     """
     Delete entry from table, return the table without the entry.
     """
-    table["data"].pop(id)
+    table["data"].pop(str(id))
 
 def copy_to_clipboard(table: dict):
     """

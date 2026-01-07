@@ -202,8 +202,11 @@ def create_table_entry_cli(table_contents: dict):
             print("Please enter an integer. ")
     schema = table_contents["schema"]
     for i in range(new_entries):
+        print("\n")
+        print(f"New entry number: {i}")
         new_entry_data = {}
         for fn, t in schema.items():
+
             while True:
                 try:
                     if t == "i":
@@ -246,7 +249,7 @@ def delete_table_entry_cli(table_contents: dict):
         except ValueError:
             print("Please enter an integer. ")
 
-        if id not in valid_ids:
+        if str(id) not in set(valid_ids):
             print("Invalid id, try again please.")
             print("Valid ids are: ")
             print(valid_ids)
