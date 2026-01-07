@@ -210,6 +210,19 @@ def copy_clipboard_cli(table_contents: dict):
     """
     CLI function to copy to clipboard a table's contents.
     """
+    print("----- COPY TABLE CONTENTS -----")
+    valid_actions = {"s", "f"}
+    utils.valid_actions_cc()
+
+    while True:
+        action = input("What do you want to do? (Valid actions are s, f): ")
+        if action not in valid_actions:
+            print("Invalid action , try again please.")
+            utils.valid_actions_cc()
+        else:
+            break
+    
+    table.copy_to_clipboard(table_contents, action == "f")
 
 if __name__ == "__main__":
     index()
