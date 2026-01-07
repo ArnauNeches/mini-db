@@ -13,7 +13,7 @@ def index():
     print("Author: Arnau Neches Vilà")
 
     while True:
-        utils.valid_actions()
+        utils.valid_actions_main()
         print("\n")
 
         while True:
@@ -21,7 +21,7 @@ def index():
 
             if action not in valid_actions:
                 print("Invalid action, try again please.")
-                utils.valid_actions()
+                utils.valid_actions_main()
             else:
                 break
         
@@ -44,12 +44,15 @@ def create_table_cli():
     print("\n")
 
     while True:
-        name = str(input("Table name?: "))
+        name = str(input("Table name? (Type b for going back): "))
 
         if name in tables_names:
             print(f"A table called {name} already exists in the database, try another name.")
             print("List of existing tables: ")
             print(tables_names)
+        elif name == "b":
+            print("Going back to main page.")
+            return
         else:
             break
     
@@ -163,12 +166,29 @@ def view_edit_tables_cli():
     table_contents = storage.read_table(table_name)
     table.show_table_contents(table_contents)
 
+    valid_actions = {"c", "e", "d", "cc", "b"}
+    utils.valid_actions_ve()
+    while True:
+        action = input("What do you want to do? (Valid actions are c, e, d, cc, b): ")
+
+        if action not in valid_actions:
+            print("Invalid action, try again please.")
+            utils.valid_actions_ve()
+        else:
+            break
     
+    if action == "b":
+        return
+    elif action == "c":
+        create_table_entry_cli(table_contents)
+    elif action == "e":
+        edit_table_entry_cli(table_contents)
+    elif action == "d":
+        delete_table_entry_cli(table_contents)
+    elif action == "cc":
+        copy_clipboard_cli(table_contents)
 
-    
-
-
-def edit_table_entry_cli(table_contents: dict, entry_id: int):
+def edit_table_entry_cli(table_contents: dict):
     """
     CLI function to edit a table's entry.
     """
@@ -180,7 +200,7 @@ def create_table_entry_cli(table_contents: dict):
     """
     pass
 
-def delete_table_entry_cli(table_contents: dict, entry_id: int):
+def delete_table_entry_cli(table_contents: dict):
     """
     CLI function to delete a table's entry.
     """
