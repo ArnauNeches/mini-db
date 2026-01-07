@@ -187,19 +187,91 @@ def edit_table_entry_cli(table_contents: dict):
     """
     CLI function to edit a table's entry.
     """
-    pass
+    schema = table_contents["schema"]
+    valid_ids = table_contents["data"].keys()
+
+    while True:
+        print("\n") 
+        try:
+            id = int(input("Which entry do you want to edit?: "))
+        except ValueError:
+            print("Please enter an integer. ")
+
+        if str(id) not in set(valid_ids):
+            print("Invalid id, try again please.")
+            print("Valid ids are: ")
+            print(valid_ids)
+        else:
+            break
+
+    current_entry_value = table_contents["data"][str(id)]
+    new_entry_data = {}
+
+    for fn, t in schema.items():
+        print("Click enter when editing any value if you want to keep it as it was.")
+        while True:
+            try:
+                if t == "i":
+                    print(f"Current value for {fn} is {current_entry_value[fn]}.")
+                    new_value = input(f"Enter the value for {fn}, it must be an integer. : ")
+                    if new_value == "":
+                        new_value = current_entry_value[fn]
+                    else:
+                        new_value = int(new_value)
+                    break
+                elif t == "s":
+                    print(f"Current value for {fn} is {current_entry_value[fn]}.")
+                    new_value = input(f"Enter the value for {fn}, it must be a string: ")
+                    if new_value == "":
+                        new_value = current_entry_value[fn]
+                    else:
+                        new_value = str(new_value)
+                    break
+                elif t == "f":
+                    print(f"Current value for {fn} is {current_entry_value[fn]}.")
+                    new_value = input(f"Enter the value for {fn}, it must be a float: ")
+                    if new_value == "":
+                        new_value = current_entry_value[fn]
+                    else:
+                        new_value = float(new_value)
+                    break
+                elif t == "b":
+                    print(f"Current value for {fn} is {current_entry_value[fn]}.")
+                    new_value = input(f"Enter the value for {fn}, it must be a boolean: ")
+                    if new_value == "":
+                        new_value = current_entry_value[fn]
+                    else:
+                        new_value = bool(new_value)
+                    break
+                elif t == "l":
+                    print(f"Current value for {fn} is {current_entry_value[fn]}.")
+                    raw = input(f"Enter the value for {fn}, it must be a comma separated list: ")
+                    if raw == "":
+                        new_value = current_entry_value[fn]
+                    else:
+                        new_value = [item.strip() for item in raw.split(",")]
+                    break
+            except ValueError:
+                print("\n")
+                print("Incorrect type for the field. Try again please.")
+        
+        new_entry_data[fn] = new_value
+    
+    table_contents["data"][str(id)] = new_entry_data
+    storage.store_table(table_contents)
+
 
 def create_table_entry_cli(table_contents: dict):
     """
     CLI function to create a new entry on a table.
     """
-    schema = table_contents["schema"]
     while True:
         try:
             new_entries = int(input("How many new entries do you want to create?: "))
             break
         except ValueError:
             print("Please enter an integer. ")
+
     schema = table_contents["schema"]
     for i in range(new_entries):
         print("\n")
